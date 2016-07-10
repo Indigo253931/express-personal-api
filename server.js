@@ -28,9 +28,9 @@ app.use('/api', destination);
 
 // Serve static files from the `/public` directory:
 // i.e. `/images`, `/scripts`, `/styles`
-var router = express.Router([req.paramas]);
+var router = express.Router([]);
 app.use(express.static('public'));
-
+app.use(app.router);
 /*
  * HTML Endpoints
  */
