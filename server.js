@@ -1,12 +1,34 @@
 // require express and other modules
 var express = require('express'),
+
+restful = require('restful');
 app = express();
- // restful = require('node-restful'),
+restful = require('node-restful'),
 mongoose = restful.mongoose,
 path = require('path'),
 
 
 module.exports = app;
+
+module.exports.getDestination = function(destination, limit){
+  Destination.find(callback).limit(limit);
+};
+
+module.exports.getDestinationById = function(destination, limit){
+  Destination.find(callback).limit(limit);
+};
+
+module.exports.getDescription = function(description, limit){
+  Description.find(callback).limit(limit);
+};
+
+module.exports.getFeatures = function(features, limit){
+  Features.find(callback).limit(limit);
+};
+
+module.exports.getActivities = function(activities, limit){
+  Destination.find(callback).limit(limit);
+};
 // parse incoming urlencoded form data
 // and populate the req.body object
 var bodyParser = require('body-parser');
@@ -30,6 +52,9 @@ app.use('/api', destination);
 // i.e. `/images`, `/scripts`, `/styles`
 var router = express.Router([]);
 app.use(express.static('public'));
+app.use(express.static('public/images'));
+app.use(express.static('public/scripts'));
+app.use(express.static('public/styles'));
 app.use(app.router);
 /*
  * HTML Endpoints
@@ -69,7 +94,26 @@ router.route('/destination').post(function(req, res){
     res.send({message: 'Destination added'});
   });
  });
-  
+  router.route('/destination').put(function(req, res){
+  var destination = new destination(req. body);
+
+  destination.save(function(err) {
+    if (err) {
+      return res.send(err);
+    }
+    res.send({message: 'Destination added'});
+  });
+ });
+  router.route('/destination').delete(function(req, res){
+  var destination = new destination(req. body);
+
+  destination.save(function(err) {
+    if (err) {
+      return res.send(err);
+    }
+    res.send({message: 'Destination added'});
+  });
+ });
   //put travelsite route
   // router.route('/travelsite/:id').put(function (req, res){
   //   travelsite.findOne({ _id: req.params.id}, function (err, travelsite)

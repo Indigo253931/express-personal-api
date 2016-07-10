@@ -20,27 +20,22 @@ var Destination = mongoose.model("Languages", languagesSchema);
 var destinationSchema = new Schema({
 	name: {
 		type: String,
-		default: ""
+		default: "",
+		required: true
 	},
 	description: [{
 		type: Schema.Types.ObjectId,
 		ref: 'Description'
 	},
-	features: {
+	features: {[
 		type: Schema.Types.ObjectId,
-		ref: 'Features'
-	},
-	location: {
-		type: Schema.Types.ObjectId,
-		ref: 'Features'
+		ref: 'Features',
+		required: true
 	},
 	activities: {
 		type: Schema.Types.ObjectId,
-		ref: 'Activities'
-	},
-	languages: {
-		type: Schema.Types.ObjectId,
-		ref: 'Languages'
+		ref: 'Activities',
+		required: true
 	}]
 });
 
@@ -64,13 +59,7 @@ var activitiesSchema = new Schema({
     default: ""
   }
 })
-
-var languagesSchema = new Schema({
- name: {
-    type: String,
-    default: ""
-  },
-})
+}
 
 
 // Export
