@@ -27,7 +27,6 @@ res.send('profile');
 app.get('/api/destination', function(req, res){
 res.send('destination');
 });
-
 app.get('/api/destination/description', function(req, res){
 res.send('description');
 });
@@ -40,6 +39,25 @@ res.send('activities');
 app.get('/api/destination/languages', function(req, res){
 res.send('languages');
 });
+
+//get by id requests
+app.get('/api/destination/:id', function(req, res){
+res.send('destination');
+});
+app.get('/api/destination/description/:id', function(req, res){
+res.send('description');
+});
+app.get('/api/destination/features/:id', function(req, res){
+res.send('features');
+});
+app.get('/api/destination/activities/:id', function(req, res){
+res.send('activities');
+});
+app.get('/api/destination/languages/:id', function(req, res){
+res.send('languages');
+});
+
+
 
 //post requests
 app.post('/api/destination', function(req, res){
