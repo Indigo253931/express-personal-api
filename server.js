@@ -1,48 +1,19 @@
 // require express and other modules
 var express = require('express'),
-
-restful = require('restful');
 app = express();
-restful = require('node-restful'),
-mongoose = restful.mongoose,
-path = require('path'),
 
-
-module.exports = app;
-
-module.exports.getDestination = function(destination, limit){
-  Destination.find(callback).limit(limit);
-};
-
-module.exports.getDestinationById = function(destination, limit){
-  Destination.find(callback).limit(limit);
-};
-
-module.exports.getDescription = function(description, limit){
-  Description.find(callback).limit(limit);
-};
-
-module.exports.getFeatures = function(features, limit){
-  Features.find(callback).limit(limit);
-};
-
-module.exports.getActivities = function(activities, limit){
-  Destination.find(callback).limit(limit);
-};
 // parse incoming urlencoded form data
 // and populate the req.body object
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/api', destination);
+// app.use('/api', destination);
 
-
-// mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || "mongodb://localhost/personal-api”);
 
 /************
  * DATABASE *
  ************/
 
-// var db = require('./models');
+ var Destination = require('./models/destination');
 
 /**********
  * ROUTES *
@@ -50,12 +21,10 @@ app.use('/api', destination);
 
 // Serve static files from the `/public` directory:
 // i.e. `/images`, `/scripts`, `/styles`
-var router = express.Router([]);
+//var router = express.Router([]);
 app.use(express.static('public'));
-app.use(express.static('public/images'));
-app.use(express.static('public/scripts'));
-app.use(express.static('public/styles'));
-app.use(app.router);
+app.use(express.static('models/index'));
+
 /*
  * HTML Endpoints
  */
@@ -69,11 +38,91 @@ app.get('/', function homepage(req, res) {
  * JSON API Endpoints
  */
 
+app.get('/', function(req, res){
+  res.send('Hello World!');
+});
+
+
+//My Profile requests
+app.get('/api/profile', function(req, res){
+ res.json({description: "Data about me",      
+  name: "Monica",
+      github_link: "https://github.com/Indigo253931",
+      github_profile_image: "https://avatars1.githubusercontent.com/u/18249019?v=3&u=6888504cff009b01465a1120c7a94132342ec4f7&s=140", 
+      current_city: "Denver", 
+      pets: [{
+        name: "Yoshi da Vinci",
+        species: "Dog",
+        breed: "Japanese Chin"}]});
+          });
+
+
+//"Prime Destination" HOMEPAGE requests
+
+//get
+app.get('/api/destination', function(req, res){
+res.json({ _id: 1,
+  location: [{name: "Denver, Colorado",
+      description: "Mile High adventures"}],
+      location2: [{
+        _id: 2,
+        name: "Mabul, Malaysia",
+      description:  "Perfect for divers with exotic marine life"}], 
+});
+});
+
+//get id
+Destination.findById('/api/destination/:id', function(req, res){
+  console.log('destination show', req.params);
+for(var i=0; i < destination.length; i++) {
+    if (location._id === req.params.id) {
+      res.json(destination[i]);
+      break; 
+    }
+}
+});
+
+//post
+app.post('/api/destination', function(req, res){
+  console.log('new destination', req.body);
+  var newDestination = req.body;
+  destination.push(newDestination);
+  res.json(newDestination);
+  });
+
+//put 
+app.put('/api/destination', function(req, res){
+db.Destination.update(destination, function (err, putDestination){
+if (err) {
+  return console.log("Error updating a destination" + err);
+}
+}); 
+res.send('destination');
+});
+
+
+//delete
+app.delete('/api/destination/:id', function(req, res){
+ console.log('destination delete', req.params);
+  var destinationId = req.params.id;
+  // find the index of the destination we want to remove
+  var deleteDestinationIndex = destination.findIndex(function(element, index) {
+    return (element._id === parseInt(req.params.id)); //params are strings
+  });
+  console.log('deleting book with index', deleteDestinationIndex);
+  var destinationToDelete = books[deleteDestinationIndex];
+  destination.splice(deleteDestinationIndex, 1);
+  res.json(destinationToDelete);
+});
+
+
+
+
  //routes
- var Destination = require('/models/destination');
+
  var router = express.Router();
 
- //get travelsite route
+ //get route
  router.route('/destination').get(function(req, res){
   destination.find(function(err, destination) {
     if (err) {
@@ -83,7 +132,7 @@ app.get('/', function homepage(req, res) {
   });
  });
 
-//post travelsite route
+//post route
 router.route('/destination').post(function(req, res){
   var destination = new destination(req. body);
 
@@ -114,18 +163,12 @@ router.route('/destination').post(function(req, res){
     res.send({message: 'Destination added'});
   });
  });
-  //put travelsite route
-  // router.route('/travelsite/:id').put(function (req, res){
-  //   travelsite.findOne({ _id: req.params.id}, function (err, travelsite)
-
-  //     )
-  // })
-  //delete travelsite route
+ 
 
 app.get('/api', function api_index(req, res) {
   // TODO: Document all your api endpoints below
   res.json({
-    my_endpoints: true, // CHANGE ME ;)
+    my_endpoints: true, 
     message: "Welcome to my personal api! Here's what you need to know!",
     documentation_url: "https://github.com/Indigo253931/personal_api/README.md", // CHANGE ME
     base_url: "http://PRIME-DESTINATION.herokuapp.com", // CHANGE ME
@@ -158,27 +201,58 @@ app.get('/api', function api_index(req, res) {
         }
     }, 
      {method: "GET", 
-      path: "/api/destination", 
-      city: "Denver",
-      description: "Mile High"
+      path: "/api/destination/:id", 
+      location: [{
+        _id: 1,
+        name: "Denver, Colorado",
+      description: "Mile High adventures"}],
+
+      location2: [{
+        _id: 2,
+        name: "Mabul, Malaysia",
+      description:  "Perfect for divers with exotic marine life"}], 
+      request: {
+          data: {
+            post_title: "Destinations",
+            post_text: "Welcome to paradise",
+          }
+        } ,
+        response: {
+          status_code: "201"
+        }
              },
       
       // CHANGE ME
       {method: "POST", 
       path: "/api/destination", 
-      description: "Post suggestions for a new destination", },
+      description: "Post a new destination", },
       
       {method: "PUT", 
       path: "/api/destination", 
       description: "Post a file for destination",
-       "request": {},
-        "response": {
-            "status_code": "200"
-        }},
+      request: {
+          data: {
+            post_title: "Malaysia",
+            post_text:"Welcome to paradise"
+          }
+        } ,
+        response: {
+          status_code: "201"
+        }
+        },
       
       {method: "DELETE", 
-      path: "/api/destination", 
-      description: "Remove a destination"}
+      path: "/api/destination/:id", 
+      description: "Remove a destination",
+      request: {
+          data: {
+            post_title: "Remove",
+            post_text:"Remove this destination location"
+          }
+        } ,
+        response: {
+          status_code: "201"
+        }}
        // CHANGE ME
     ]
   });

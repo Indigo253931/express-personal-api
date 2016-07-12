@@ -3,77 +3,35 @@ var mongoose = require("mongoose");
 mongoose.connect( process.env.MONGOLAB_URI ||
                   process.env.MONGOHQ_URL ||
                   "mongodb://localhost/personal-api");
+//Dependencies
+var express = require('express');
+var app = espress();
+var bodyParser=require('body-parser');
 
 var Schema = mongoose.Schema;
 
-// module.exports.Campsite = require("./campsite.js.example");
 
-module.exports.Destination = require("./destination.js");
+//Configuration
+mongoose.connect('mongodb://localhost/destination');
+process.on('exit', function() {mongoose.disconnect(); });
+app.set("view engine", "ejs");
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(_dirname + '/public'));
+var port = 3000;
 
-module.exports = mongoose.model('Destination', destinationSchema);
+//Controllers
+var destinationController= require("./controllers/destinationController");
 
-var Destination = mongoose.model("Description", descriptionSchema);
-var Destination = mongoose.model("Features", featuresSchema);
-var Destination = mongoose.model("Activities", activitiesSchema);
-var Destination = mongoose.model("Languages", languagesSchema);
-// Referenced Data
-var destinationSchema = new Schema({
-	name: {
-		type: String,
-		default: "",
-		required: true
-	},
-	description: [{
-		type: Schema.Types.ObjectId,
-		ref: 'Description'
-	},
-	features: {[
-		type: Schema.Types.ObjectId,
-		ref: 'Features',
-		required: true
-	},
-	activities: {
-		type: Schema.Types.ObjectId,
-		ref: 'Activities',
-		required: true
-	}]
+//Routes
+app.get("/destination", destinationController.index);
+
+//Start server
+app.listen(port, function(){
+	console.log("app is running on port:", port);
 });
 
-var descriptionSchema = new Schema({
- title: {
-    type: String,
-    default: ""
-  }
-})
-
-var featuresSchema = new Schema({
- name: {
-    type: String,
-    default: ""
-  }
-})
-
-var activitiesSchema = new Schema({
- name: {
-    type: String,
-    default: ""
-  }
-})
-}
-
-
-// Export
-exports.Destination = Destination;
-exports.Description = Description;
-exports.Features = Features;
-exports.Activities = Activities;
-exports.Languages = Languages;
-// var Destinations = restful.model('destinations', TravelSchema);
-// Destinations.methods(['get', 'put', 'post', 'delete']);
-// Travel.register(app, '/api/destinations');
-//Get Travelsite
-// var travelsite.get = module.exports = mongoose .model();
-// travelsite.find
+// module.exports.Campsite = require("./campsite.js.example");
 
 
 //Close connection on close
@@ -84,3 +42,4 @@ process.on('exit', function() {
     console.log("Disconnected DB");
     process.exit(); 
   });
+});
