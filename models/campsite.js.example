@@ -1,10 +1,10 @@
 // var mongoose = require('mongoose'),
 //   Schema = mongoose.Schema;
 
-// var TravelsiteSchema = new Schema({
+// var Schema = new Schema({
 //   description: String
 // });
 
-// var Travelsite = mongoose.model('Travelsite', TravelsiteSchema);
+// var Destination = mongoose.model('Travelsite', DestinationSchema);
 
-// module.exports = Travelsite;
+// module.exports = Destination;

@@ -1,18 +1,18 @@
 
-module.exports = mongoose.model('Destination', destinationSchema);
+// module.exports = mongoose.model('Destination', destinationSchema);
 
 
-var Destination = require("../models/destination");
+// var Destination = require("../models/destination");
 
-var destinationController = {
-	index: function(req, res){
-		Destination.find({}, function(err, destination){
-			res.render("destination/index", {destination: destination});
-		});
-	}
-};
+// var destinationController = {
+// 	index: function(req, res){
+// 		Destination.find({}, function(err, destination){
+// 			res.render("destination/index", {destination: destination});
+// 		});
+// 	}
+// };
 
-module.exports = destinationController;
+// module.exports = destinationController;
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;

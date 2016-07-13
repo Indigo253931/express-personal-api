@@ -7,13 +7,13 @@ app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use('/api', destination);
-
+module.exports=router;
 
 /************
  * DATABASE *
  ************/
 
- var Destination = require('./models/destination');
+ var db = require('./models');
 
 /**********
  * ROUTES *
@@ -21,9 +21,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static files from the `/public` directory:
 // i.e. `/images`, `/scripts`, `/styles`
-//var router = express.Router([]);
+
 app.use(express.static('public'));
-app.use(express.static('models/index'));
+// app.use(express.static('models/index'));
 
 /*
  * HTML Endpoints
@@ -59,111 +59,128 @@ app.get('/api/profile', function(req, res){
 
 //"Prime Destination" HOMEPAGE requests
 
-//get
+//get (find) 
 app.get('/api/destination', function(req, res){
-res.json({ _id: 1,
-  location: [{name: "Denver, Colorado",
-      description: "Mile High adventures"}],
-      location2: [{
-        _id: 2,
-        name: "Mabul, Malaysia",
-      description:  "Perfect for divers with exotic marine life"}], 
+
+db.Destination.find({}, function(err, destination){
+  console.log(destination);
+  res.json(destination);
 });
 });
 
-//get id
-Destination.findById('/api/destination/:id', function(req, res){
-  console.log('destination show', req.params);
+
+//get id (show)
+app.get('/api/destination/:id', function(req, res){
+db.Destination.show({_id}, function(err, destination){
+  console.log(destination, req.params);
+  res.json(destination[i]);
 for(var i=0; i < destination.length; i++) {
     if (location._id === req.params.id) {
-      res.json(destination[i]);
       break; 
     }
-}
+  }
+  });
 });
 
-//post
+//post (create)
 app.post('/api/destination', function(req, res){
-  console.log('new destination', req.body);
-  var newDestination = req.body;
+  db.Destination.create({}, function(err, destination){
+    var newDestination = req.body;
   destination.push(newDestination);
-  res.json(newDestination);
+console.log(destination, req.body);
+   res.json(newDestination);
+  });
   });
 
-//put 
+//put (update)
 app.put('/api/destination', function(req, res){
-db.Destination.update(destination, function (err, putDestination){
+db.Destination.update(destination, function (err, destination){
+res.send('destination');
 if (err) {
   return console.log("Error updating a destination" + err);
 }
 }); 
-res.send('destination');
 });
 
 
-//delete
+//delete (remove)
 app.delete('/api/destination/:id', function(req, res){
+  db.destination.remove({}, function(err, destination){
+ // db.Destination.remove({_id: :id?}
  console.log('destination delete', req.params);
   var destinationId = req.params.id;
   // find the index of the destination we want to remove
   var deleteDestinationIndex = destination.findIndex(function(element, index) {
     return (element._id === parseInt(req.params.id)); //params are strings
   });
-  console.log('deleting book with index', deleteDestinationIndex);
-  var destinationToDelete = books[deleteDestinationIndex];
+  console.log('deleting destination with index', deleteDestinationIndex);
+  var destinationToDelete = destination[deleteDestinationIndex];
   destination.splice(deleteDestinationIndex, 1);
   res.json(destinationToDelete);
+  });
+
 });
 
-
-
-
  //routes
+ // //get route
+ // destinationRouter.get('api/destination', function(req, res){
+ //  destination.find(function(err, destination) {
+ //    if (err) {
+ //      return res.send(err);
+ //    }
+ //    res.json(destination);
+ //  });
+ // });
 
- var router = express.Router();
+//  //get route id
+//  destinationRouter.get('api/destination/:id', function(req, res){
+//   var foundDestination;
+//   var targetId = parseInt(req.params.id);
+//   for(var i = 0; i < destination.length; i++){
+//     if (destination[i].id === targetId) {
+//   foundDestination=destination[i];
+// }
+//     res.json(destination);
+//     res.send(destination);
+//   }
+//  });
 
- //get route
- router.route('/destination').get(function(req, res){
-  destination.find(function(err, destination) {
-    if (err) {
-      return res.send(err);
-    }
-    res.json(destination);
-  });
- });
+// //post route
+// destinationRouter.post('api/destination', function(req, res){
+//   var destination = new destination(req.body.destination.create);
 
-//post route
-router.route('/destination').post(function(req, res){
-  var destination = new destination(req. body);
+//   destination.save(function(err) {
+//     if (err) {
+//       return res.send(err);
+//     }
+//     res.send({message: 'Destination added'});
+//     res.json(destination);
+//   });
+//  });
+//   destinationRouter.put('api/destination/:id', function(req, res){
+//   var destination = new destination(req. body);
 
-  destination.save(function(err) {
-    if (err) {
-      return res.send(err);
-    }
-    res.send({message: 'Destination added'});
-  });
- });
-  router.route('/destination').put(function(req, res){
-  var destination = new destination(req. body);
+//   destination.save(function(err) {
+//     if (err) {
+//       return res.send(err);
+//     }
+//     res.send({message: 'Destination added'});
+//     res.json(destination);
+//   });
+//  });
+//   destinationRouter.delete('api/destination/:id', function(req, res){
+//   var destination = new destination(req. body);
 
-  destination.save(function(err) {
-    if (err) {
-      return res.send(err);
-    }
-    res.send({message: 'Destination added'});
-  });
- });
-  router.route('/destination').delete(function(req, res){
-  var destination = new destination(req. body);
-
-  destination.save(function(err) {
-    if (err) {
-      return res.send(err);
-    }
-    res.send({message: 'Destination added'});
-  });
- });
+//   destinationRouter.save(function(err) {
+//     if (err) {
+//       return res.send(err);
+//     }
+//     res.send({message: 'Destination added'});
+//     res.json(destination);
+//   });
+// //  });
  
+//  app.use("/destination", destinationRouter); 
 
 app.get('/api', function api_index(req, res) {
   // TODO: Document all your api endpoints below
@@ -204,23 +221,27 @@ app.get('/api', function api_index(req, res) {
       path: "/api/destination/:id", 
       location: [{
         _id: 1,
-        name: "Denver, Colorado",
-      description: "Mile High adventures"}],
+        name: "Mabul, Malaysia",
+      features: ["Ocean, humid climate"],
+      activities: ["Diving", "Snorkeling"]
+    }],
 
       location2: [{
         _id: 2,
-        name: "Mabul, Malaysia",
-      description:  "Perfect for divers with exotic marine life"}], 
+        name: "Denver, Colorado",
+      features:  ["Perfect for divers with exotic marine life"],
+      activities: ["Hiking", "Skiing", "Snowboarding", "Rock climbing"]
+    }], 
       request: {
           data: {
             post_title: "Destinations",
-            post_text: "Welcome to paradise",
+            post_text: "Welcome to paradise"
           }
         } ,
         response: {
           status_code: "201"
         }
-             },
+             }
       
       // CHANGE ME
       {method: "POST", 
