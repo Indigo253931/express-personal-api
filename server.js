@@ -6,8 +6,8 @@ app = express();
 // and populate the req.body object
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use('/api', destination);
-module.exports=router;
+app.use(bodyParser.json());
+
 
 /************
  * DATABASE *
@@ -23,7 +23,6 @@ module.exports=router;
 // i.e. `/images`, `/scripts`, `/styles`
 
 app.use(express.static('public'));
-// app.use(express.static('models/index'));
 
 /*
  * HTML Endpoints
@@ -71,124 +70,51 @@ db.Destination.find({}, function(err, destination){
 
 //get id (show)
 app.get('/api/destination/:id', function(req, res){
-db.Destination.show({_id}, function(err, destination){
-  console.log(destination, req.params);
-  res.json(destination[i]);
-for(var i=0; i < destination.length; i++) {
-    if (location._id === req.params.id) {
-      break; 
-    }
-  }
-  });
+var destinationId = req.params.id;
+db.Destination.findById(destinationId, function(err, destination){
+  console.log('destination show', req.params.id);
+  res.json(destination);
+});
+
 });
 
 //post (create)
 app.post('/api/destination', function(req, res){
-  db.Destination.create({}, function(err, destination){
-    var newDestination = req.body;
-  destination.push(newDestination);
-console.log(destination, req.body);
-   res.json(newDestination);
+  var newDestination = req.body;
+  db.Destination.create(newDestination, function(err, destination){
+    console.log('destination create', req.body);
+    res.json(destination);
   });
+});
+ 
+//PUT (UPDATE)
+app.put('/api/destination/:id', function(req, res){
+var updateDestination = req.params.id;
+db.Destination.update({_id: updateDestination}, req.body, function (err, destination){
+  console.log('destination updated', req.body);
+db.Destination.findById(updateDestination, function(err, destination){
+res.json(destination);
   });
-
-//put (update)
-app.put('/api/destination', function(req, res){
-db.Destination.update(destination, function (err, destination){
-res.send('destination');
-if (err) {
-  return console.log("Error updating a destination" + err);
-}
 }); 
 });
 
-
-//delete (remove)
+//DELETE (REMOVE)
 app.delete('/api/destination/:id', function(req, res){
-  db.destination.remove({}, function(err, destination){
- // db.Destination.remove({_id: :id?}
- console.log('destination delete', req.params);
-  var destinationId = req.params.id;
-  // find the index of the destination we want to remove
-  var deleteDestinationIndex = destination.findIndex(function(element, index) {
-    return (element._id === parseInt(req.params.id)); //params are strings
+  var deleteDestination = req.params.id;
+  db.Destination.remove({_id: deleteDestination}, function(err, destination){
+    res.json({});
   });
-  console.log('deleting destination with index', deleteDestinationIndex);
-  var destinationToDelete = destination[deleteDestinationIndex];
-  destination.splice(deleteDestinationIndex, 1);
-  res.json(destinationToDelete);
-  });
-
 });
 
- //routes
- // //get route
- // destinationRouter.get('api/destination', function(req, res){
- //  destination.find(function(err, destination) {
- //    if (err) {
- //      return res.send(err);
- //    }
- //    res.json(destination);
- //  });
- // });
-
-//  //get route id
-//  destinationRouter.get('api/destination/:id', function(req, res){
-//   var foundDestination;
-//   var targetId = parseInt(req.params.id);
-//   for(var i = 0; i < destination.length; i++){
-//     if (destination[i].id === targetId) {
-//   foundDestination=destination[i];
-// }
-//     res.json(destination);
-//     res.send(destination);
-//   }
-//  });
-
-// //post route
-// destinationRouter.post('api/destination', function(req, res){
-//   var destination = new destination(req.body.destination.create);
-
-//   destination.save(function(err) {
-//     if (err) {
-//       return res.send(err);
-//     }
-//     res.send({message: 'Destination added'});
-//     res.json(destination);
-//   });
-//  });
-//   destinationRouter.put('api/destination/:id', function(req, res){
-//   var destination = new destination(req. body);
-
-//   destination.save(function(err) {
-//     if (err) {
-//       return res.send(err);
-//     }
-//     res.send({message: 'Destination added'});
-//     res.json(destination);
-//   });
-//  });
-//   destinationRouter.delete('api/destination/:id', function(req, res){
-//   var destination = new destination(req. body);
-
-//   destinationRouter.save(function(err) {
-//     if (err) {
-//       return res.send(err);
-//     }
-//     res.send({message: 'Destination added'});
-//     res.json(destination);
-//   });
-// //  });
- 
-//  app.use("/destination", destinationRouter); 
+//add error handling ()
 
 app.get('/api', function api_index(req, res) {
   // TODO: Document all your api endpoints below
   res.json({
     my_endpoints: true, 
     message: "Welcome to my personal api! Here's what you need to know!",
-    documentation_url: "https://github.com/Indigo253931/personal_api/README.md", // CHANGE ME
-    base_url: "http://PRIME-DESTINATION.herokuapp.com", // CHANGE ME
+    documentation_url: "https://github.com/Indigo253931/personal_api/README.md", 
+    base_url: "http://PRIME-DESTINATION.herokuapp.com", 
     
     endpoints: [
       {method: "GET", 
@@ -209,77 +135,38 @@ app.get('/api', function api_index(req, res) {
         request: {
           data: {
             post_title: "Monica's Profile",
-            post_text:"Welcome to my profile!"
-
-          }
-        } ,
+            post_text:"Welcome to my profile!"}
+        },
         response: {
           status_code: "201"
         }
-    }, 
-     {method: "GET", 
+      },
+      {method: "GET", 
       path: "/api/destination/:id", 
-      location: [{
-        _id: 1,
-        name: "Mabul, Malaysia",
+      location: [{ 
+      _id: 1,
+      name: "Mabul, Malaysia",
       features: ["Ocean, humid climate"],
       activities: ["Diving", "Snorkeling"]
-    }],
+     },
 
-      location2: [{
-        _id: 2,
-        name: "Denver, Colorado",
-      features:  ["Perfect for divers with exotic marine life"],
-      activities: ["Hiking", "Skiing", "Snowboarding", "Rock climbing"]
-    }], 
-      request: {
-          data: {
-            post_title: "Destinations",
-            post_text: "Welcome to paradise"
-          }
-        } ,
-        response: {
-          status_code: "201"
-        }
-             }
-      
-      // CHANGE ME
-      {method: "POST", 
-      path: "/api/destination", 
-      description: "Post a new destination", },
-      
-      {method: "PUT", 
-      path: "/api/destination", 
-      description: "Post a file for destination",
-      request: {
-          data: {
-            post_title: "Malaysia",
-            post_text:"Welcome to paradise"
-          }
-        } ,
-        response: {
-          status_code: "201"
-        }
-        },
-      
-      {method: "DELETE", 
-      path: "/api/destination/:id", 
-      description: "Remove a destination",
-      request: {
-          data: {
-            post_title: "Remove",
-            post_text:"Remove this destination location"
-          }
-        } ,
-        response: {
-          status_code: "201"
-        }}
-       // CHANGE ME
-    ]
-  });
+     {method: "POST", 
+       path: "/api/destination", 
+       description: "Post a new destination"},
 
-});
+       {method: "PUT", 
+        path: "/api/destination/:id", 
+        description: "Edit a destination"},
 
+       {method: "DELETE", 
+       path: "/api/destination/:id", 
+      description: "Remove a destination"}
+    ]}]
+    });
+
+   });
+
+//      
 
 /**********
  * SERVER *
@@ -287,6 +174,6 @@ app.get('/api', function api_index(req, res) {
 
 // listen on port 3000
 
-app.listen(process.env.PORT || 3000, function () {
+app.listen(process.env.PORT || 3000, function() {
   console.log('Express server is up and running on http://localhost:3000/');
 });

@@ -22,19 +22,6 @@ activities: ["Hiking", "Skiing", "Snowboarding", "Rock climbing"]
 ];
 
 
- db.Destination.show(destination, function(err, destination){
-   if (err){     
-      return console.log("Error:", err);
-      } else {
-         console.log("Found" + destination);
-         mongoose.connection.close();
-      }
-
- console.log("Found destination", destination._id);
-   process.exit(); // we're all done! Exit the program})
-});
-
-
  db.Destination.create(destination, function(err, destination){
    if (err){     
    	return console.log("Error:", err);
@@ -47,29 +34,3 @@ activities: ["Hiking", "Skiing", "Snowboarding", "Rock climbing"]
    process.exit(); // we're all done! Exit the program})
 });
 
-
-
- db.Destination.update(destination, function(err, destination){
-   if (err){     
-      return console.log("Error:", err);
-      } else {
-         console.log("Updated" + destination);
-         mongoose.connection.close();
-      }
-
- console.log("Updated a destination", destination._id);
-   process.exit(); // we're all done! Exit the program})
-});
-
-
- db.Destination.remove(destination, function(err, destination){
-   if (err){     
-      return console.log("Error:", err);
-      } else {
-         console.log("Deleted" + destination);
-         mongoose.connection.close();
-      }
-
- console.log("Deleted a destination", destination._id);
-   process.exit(); // we're all done! Exit the program})
-});
