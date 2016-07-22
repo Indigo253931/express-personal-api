@@ -41,7 +41,6 @@ app.get('/', function(req, res){
   res.send('Hello World!');
 });
 
-
 //My Profile requests
 app.get('/api/profile', function(req, res){
  res.json({description: "Data about me",      
@@ -123,7 +122,7 @@ app.get('/api', function api_index(req, res) {
   
       {method: "GET", 
       path: "/api/profile", 
-      description: "Data about me",
+      description: "About",
       name: "Monica",
       github_link: "https://github.com/Indigo253931",
       github_profile_image: "https://avatars1.githubusercontent.com/u/18249019?v=3&u=6888504cff009b01465a1120c7a94132342ec4f7&s=140", 
